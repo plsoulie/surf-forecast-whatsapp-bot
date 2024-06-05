@@ -2,23 +2,8 @@ import sys
 import json
 import pysurfline
 from datetime import datetime
-
-def average_weather_data(weather_data):
-    # Calculate average temperature, pressure, and condition
-    total_temperature = sum(weather['temperature'] for weather in weather_data)
-    total_pressure = sum(weather['pressure'] for weather in weather_data)
-    
-    # Calculate average condition (by taking the most frequent condition)
-    conditions = [weather['condition'] for weather in weather_data]
-    most_frequent_condition = max(set(conditions), key=conditions.count)
-    
-    return {
-        "timestamp": weather_data[0]['timestamp'],  # Use the timestamp from the first entry
-        "utcOffset": weather_data[0]['utcOffset'],  # Use the utcOffset from the first entry
-        "temperature": total_temperature / len(weather_data),
-        "condition": most_frequent_condition,
-        "pressure": total_pressure / len(weather_data)
-    }
+from collections import Counter
+from statistics import median
 
 def serialize_weather(weather, current_time):
     return {
@@ -30,6 +15,8 @@ def serialize_weather(weather, current_time):
     }
 
 def serialize_wave(wave, current_time):
+    serialized_swells = [{"period": swell.period} for swell in wave.swells[:1]]
+
     return {
         "timestamp": str(current_time),
         "probability": wave.probability,
@@ -40,7 +27,8 @@ def serialize_wave(wave, current_time):
             "plus": wave.surf.plus,
             "humanRelation": wave.surf.humanRelation
         },
-        "power": wave.power
+        "power": wave.power,
+        "swells": serialized_swells
     }
 
 def serialize_wind(wind, current_time):
@@ -63,24 +51,26 @@ def serialize_tide(tide, current_time):
 
 def get_surf_forecast(spot_id):
     current_time = datetime.now()  # Get current time
-    spot_forecasts = pysurfline.get_spot_forecasts(spot_id, intervalHours=1, days=1)
-    weather_data = [serialize_weather(weather, current_time) for weather in spot_forecasts.weather]
-    aggregated_weather_data = average_weather_data(weather_data)
-    wave_data = [serialize_wave(wave, current_time) for wave in spot_forecasts.waves]
-    wind_data = [serialize_wind(wind, current_time) for wind in spot_forecasts.wind]
-    tide_data = [serialize_tide(tide, current_time) for tide in spot_forecasts.tides]
+    spot_forecasts = pysurfline.get_spot_forecasts(spot_id)
+    
+    weather_data = [serialize_weather(weather, current_time) for weather in spot_forecasts.weather[:1]]
+    
+    wave_data = [serialize_wave(wave, current_time) for wave in spot_forecasts.waves[:1]]
+    
+    wind_data = [serialize_wind(wind, current_time) for wind in spot_forecasts.wind[:1]]
+
+    tide_data = [serialize_tide(tide, current_time) for tide in spot_forecasts.tides[:1]]
 
     return {
         "spotId": spot_forecasts.spotId,
         "name": spot_forecasts.name,
-        "weather": aggregated_weather_data,
-        # "weather": weather_data,
-        # "waves": wave_data,
-        # "wind": wind_data,
-        # "tides": tide_data
+        "weather": weather_data,
+        "waves": wave_data,
+        "wind": wind_data,
+        "tides": tide_data
     }
 
 if __name__ == "__main__":
     spot_id = sys.argv[1]
     forecast_data = get_surf_forecast(spot_id)
-    print(json.dumps(forecast_data))
+    print(json.dumps(forecast_data, indent=4))
