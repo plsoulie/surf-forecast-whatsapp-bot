@@ -1,10 +1,10 @@
-// models/User.js
 const mongoose = require('mongoose');
 
-const UserSchema = new mongoose.Schema({
-  phoneNumber: { type: String, required: true, unique: true },
-  location: { type: String, required: true },
+const userSchema = new mongoose.Schema({
+  phoneNumber: String,
+  location: String,
+  spotId: String,
   subscribed: { type: Boolean, default: true }
 });
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('User', userSchema);
