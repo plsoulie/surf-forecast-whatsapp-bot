@@ -1,8 +1,7 @@
-import requests
-
-def normalize_spot_name(spot_name):
-    # Convert the spot name to lowercase and remove whitespace
-    return spot_name.lower().replace(" ", "-")
+import requests 
+import pysurfline  # Assuming this module provides surf forecast data
+from datetime import datetime
+from utils import normalize_spot_name, serialize_tide, serialize_wave, serialize_weather, serialize_wind
 
 def get_spot_id(spot_name):
     # Normalize the spot name
@@ -47,8 +46,24 @@ def get_spot_id(spot_name):
     else:
         print("Failed to fetch spot ID. Please try again.")
         return None
+    
+# Function to get surf forecast data for a given spot ID
+def get_surf_forecast(spot_id):
+    current_time = datetime.now()  # Get current time
+    spot_forecasts = pysurfline.get_spot_forecasts(spot_id)  # Get forecast data for the spot
+    
+    # Serialize weather, wave, wind, and tide data
+    weather_data = [serialize_weather(weather, current_time) for weather in spot_forecasts.weather[:1]]
+    wave_data = [serialize_wave(wave, current_time) for wave in spot_forecasts.waves[:1]]
+    wind_data = [serialize_wind(wind, current_time) for wind in spot_forecasts.wind[:1]]
+    tide_data = [serialize_tide(tide, current_time) for tide in spot_forecasts.tides[:1]]
 
-# Test the function
-spot_name = input("Enter the name of the surf spot: ")
-spot_id = get_spot_id(spot_name)
-print("Spot ID:", spot_id)
+    # Return a dictionary containing forecast data
+    return {
+        "spotId": spot_forecasts.spotId,
+        "name": spot_forecasts.name,
+        "weather": weather_data,
+        "waves": wave_data,
+        "wind": wind_data,
+        "tides": tide_data
+    }

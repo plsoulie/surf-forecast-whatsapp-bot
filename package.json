@@ -8,13 +8,14 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "This project demonstrates the integration of an Express.js-based WhatsApp chatbot with the PySurfline API, allowing users to get real-time surf conditions directly through WhatsApp.",
   "dependencies": {
     "axios": "^1.7.2",
+    "body-parser": "^1.20.2",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "mongoose": "^8.4.1",
     "node-cron": "^3.0.3",
-    "twilio": "^5.1.0"
+    "twilio": "^5.1.1"
   }
 }
