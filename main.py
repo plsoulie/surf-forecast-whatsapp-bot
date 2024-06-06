@@ -1,17 +1,15 @@
 import sys
-import json
-from surf_api import get_spot_id, get_surf_forecast
-from utils import format_forecast_for_whatsapp
+from surf_api import get_surf_forecast
+
+def main(spot_id):
+    try:
+        forecast = get_surf_forecast(spot_id)
+        print(forecast)
+    except Exception as e:
+        print(f"Error: {e}")
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        spot_name = sys.argv[1]
-        spot_id = get_spot_id(spot_name)
-        if spot_id:
-            forecast_data = get_surf_forecast(spot_id)
-            formatted_message = format_forecast_for_whatsapp(forecast_data)
-            print(formatted_message)
-        else:
-            print("Unable to retrieve forecast without a valid spot ID.")
+    if len(sys.argv) < 2:
+        print("Usage: python main.py <spot_id>")
     else:
-        print("No spot name provided.")
+        main(sys.argv[1])

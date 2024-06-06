@@ -1,6 +1,11 @@
+import re
+
 def normalize_spot_name(spot_name):
-    # Convert the spot name to lowercase and remove whitespace
-    return spot_name.lower().replace(" ", "-")
+    # Convert the spot name to lowercase
+    spot_name = spot_name.lower()
+    # Replace one or more whitespace characters with a single hyphen
+    spot_name = re.sub(r'\s+', '-', spot_name)
+    return spot_name
 
 # Function to serialize weather data
 def serialize_weather(weather, current_time):
