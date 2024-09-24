@@ -29,6 +29,7 @@ def get_spot_id(spot_name):
 
 def get_surf_forecast(spot_id):
     current_time = datetime.now()
+    print(current_time)
     spot_forecasts = pysurfline.get_spot_forecasts(spot_id)
     
     weather_data = [serialize_weather(weather, current_time) for weather in spot_forecasts.weather[:1]]
