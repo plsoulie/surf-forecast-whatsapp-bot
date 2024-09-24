@@ -8,10 +8,6 @@ This project demonstrates the integration of an Express.js-based WhatsApp chatbo
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Project Structure](#project-structure)
-- [Required Libraries](#required-libraries)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Overview
 
@@ -87,18 +83,3 @@ The application combines an Express.js server and a WhatsApp chatbot with Python
 2. Send a message to your WhatsApp bot using the Twilio WhatsApp number.
 
 3. The bot will respond with current surf conditions for the specified location.
-
-## Project Structure
-
-```
-swellbot/
-├── app.js
-├── package.json
-├── requirements.txt
-├── .env
-├── src/
-│   ├── routes/
-│   │   └── webhook.js
-│   ├── services/
-│   │   ├── wh
-```
